@@ -12,7 +12,12 @@ elif len(sys.argv) == 3:
     package_name = sys.argv[1]
     version = sys.argv[2]
 
-json_res = requests.get(URL_PATTERN.format(package_name)).content
+json_res = requests.get(URL_PATTERN.format(package_name)).content.decode()
+
+if "none-any" in json_res:
+    print("No need to compile!")
+    sys.exit(0)
+
 data = json.loads(json_res)
 print(data.keys())
 
@@ -28,9 +33,9 @@ for download_option in data['releases'][last_version]:
         os.system("wget {}".format(download_option['url']))
         os.makedirs(package_name)
         if ".zip" in download_option['filename']:
-            os.system("unzip {} -d {}".format(download_option['filename'],package_name))
+            os.system("unzip {} -d {} 1>/dev/null".format(download_option['filename'],package_name))
             os.system("rm {}".format(download_option['filename'],package_name))
         elif ".tar" in download_option['filename']:
-            os.system("tar -C  {} -xvf {}".format(package_name,download_option['filename']))
+            os.system("tar -C  {} -xvf {} 1>/dev/null".format(package_name,download_option['filename']))
             os.system("rm {}".format(download_option['filename'],package_name))
 

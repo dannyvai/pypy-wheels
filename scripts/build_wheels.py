@@ -2,6 +2,7 @@ import os
 import sys
 import subprocess
 import shutil
+import glob
 
 git_packages = open("packages.lst","r").readlines()
 
@@ -15,17 +16,31 @@ def is_package_built(package_name):
 for package in git_packages:
 
     package=package.strip()
+    if " " in package:
+        package,version = package.split(" ")
+    else:
+        version = None
 
     if is_package_built(package):
         continue
 
     print("Downloading {}".format(package))
     if not os.path.exists(package):
-        proc = subprocess.Popen(["python", "download_package.py", "{}".format(package)],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        if version is None:
+            proc = subprocess.Popen(["python", "download_package.py", "{}".format(package)],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        else:
+            proc = subprocess.Popen(["python", "download_package.py", package,version],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+
         ret =  proc.communicate()[0].decode()
-        print(ret)
+        #print(ret)
+        if "No need to compile!" in ret:
+            print("No need to compile!")
+            continue
+
         if "error" in str(ret.lower()):
+             print("Error downloading ",package)
              print(ret)
+             #print(ret)
 
     print("Building wheel {}".format(package))
     proc = subprocess.Popen(["find", ".", "-name",'setup.py'],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
@@ -47,8 +62,16 @@ for package in git_packages:
                 print("Compiling for pypy3.6")
                 proc = subprocess.Popen(["python", "setup.py", "bdist_wheel"],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
                 ret =  proc.communicate()[0].decode()
-                print(ret)
+                #print(ret)
 
+                print("Installing for pypy3.6")
+                whl_files = glob.glob("./dist/*.whl")
+                if len(whl_files) == 0:
+                    print("Error building wheel for",package)
+                else:
+                    proc = subprocess.Popen(["pip", "install", whl_files[0]],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+                    ret =  proc.communicate()[0].decode()
+                    print(ret)
 
                 print("Copy wheels")
                 os.system("mv ./dist/*.whl ~/wheels/")
