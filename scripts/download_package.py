@@ -5,12 +5,21 @@ import os
 
 URL_PATTERN = 'https://pypi.python.org/pypi/{}/json'
 
-package_name = sys.argv[1]
+if len(sys.argv) == 2:
+    package_name = sys.argv[1]
+    version = "latest"
+elif len(sys.argv) == 3:
+    package_name = sys.argv[1]
+    version = sys.argv[2]
 
 json_res = requests.get(URL_PATTERN.format(package_name)).content
 data = json.loads(json_res)
 print(data.keys())
-last_version = data['info']['version']
+
+if version == 'latest':
+    last_version = data['info']['version']
+else:
+    last_version = version
 
 print("Last version of {} is {}".format(package_name,last_version))
 
