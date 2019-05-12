@@ -54,24 +54,38 @@ for package in git_packages:
                 print("setup.py is here: {}".format(setup_py_dir))
                 os.chdir(setup_py_dir)
                 print("Changed dir to {}".format(os.getcwd()))
-                #print("Compiling for pypy2.7")
+                print("Compiling for pypy2.7")
+                os.system('/bin/bash -c "source ~/pypy2_venv/bin/activate; python setup.py bdist_wheel"')
                 #proc = subprocess.Popen(["/home/dwainshtein/pypy2.7-v7.1.1-linux64/bin/pypy", "setup.py", "bdist_wheel"],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
                 #ret =  proc.communicate()[0]
                 #print(ret)
 
+                print("Installing for pypy2.7")
+                whl_files = glob.glob("./dist/*.whl")
+                if len(whl_files) == 0:
+                    print("Error building wheel for {} for pypy2.7".format(package))
+                else:
+                    os.system('/bin/bash -c "source ~/pypy2_venv/bin/activate; pip install {}"'.format(whl_files[0]))
+
+                print("Copy wheels")
+                os.system("mv ./dist/*.whl ~/wheels/")
+
+
                 print("Compiling for pypy3.6")
-                proc = subprocess.Popen(["python", "setup.py", "bdist_wheel"],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-                ret =  proc.communicate()[0].decode()
+                os.system('/bin/bash -c "source ~/pypy3_venv/bin/activate; python setup.py bdist_wheel"')
+                #proc = subprocess.Popen(["python", "setup.py", "bdist_wheel"],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+                #ret =  proc.communicate()[0].decode()
                 #print(ret)
 
                 print("Installing for pypy3.6")
                 whl_files = glob.glob("./dist/*.whl")
                 if len(whl_files) == 0:
-                    print("Error building wheel for",package)
+                    print("Error building wheel for {} for pypy3.6".format(package))
                 else:
-                    proc = subprocess.Popen(["pip", "install", whl_files[0]],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-                    ret =  proc.communicate()[0].decode()
-                    print(ret)
+                    os.system('/bin/bash -c "source ~/pypy3_venv/bin/activate; pip install {}"'.format(whl_files[0]))
+                    #proc = subprocess.Popen(["pip", "install", whl_files[0]],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+                    #ret =  proc.communicate()[0].decode()
+                    #print(ret)
 
                 print("Copy wheels")
                 os.system("mv ./dist/*.whl ~/wheels/")

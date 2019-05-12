@@ -14,7 +14,8 @@ elif len(sys.argv) == 3:
 
 json_res = requests.get(URL_PATTERN.format(package_name)).content.decode()
 
-if "none-any" in json_res:
+
+if "none-any" in json_res or not "bdist_wheel" in json_res:
     print("No need to compile!")
     sys.exit(0)
 
