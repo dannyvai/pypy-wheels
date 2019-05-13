@@ -1,0 +1,28 @@
+check if all the releases are sdist it means that it's not an extension so no need to compile
+add items for pyarrow
+add items for typed-ast
+Cheetah-2.4.4 compilation problem
+mysql-python using wrong ConfigParser (configparser)
+create dependency graph and compile/install things before they needed
+add items for pyodbc
+thinc error compiling (pypy)
+python-gflags no bdist_wheel
+asyncpg==0.18.3 compilation problem
+ruamel.ordereddict-0.4.13 compilation problem (pypy)
+crcmod no bdist_wheel
+understand how to filter multi_key_dict it has exe files :| but no compilation is needed
+understand how to compile pyproj-2.1
+llvmlite compilation missing packages (LLVM)
+fiona compilation missing packages
+numba-0.43.1 compilation error
+cmake missing
+confluent-kafka missing libraries
+pygame
+pygobject
+cvxopt
+bitarray no bdist_wheel
+rasterio need to add GDAL (not the first package)
+mpi4py no mpi
+
+
+

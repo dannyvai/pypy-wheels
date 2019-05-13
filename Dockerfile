@@ -27,6 +27,9 @@ RUN apt-get install -y nano
 RUN apt-get install -y unzip
 RUN apt-get install -y libssl1.0.0 libssl-dev
 
+RUN apt-get install -y libgirepository1.0-dev
+RUN apt-get install -y libcairo2-dev
+
 
 # Matplotlib. See https://github.com/matplotlib/matplotlib/issues/3029
 RUN apt-get install -y libfreetype6-dev
@@ -43,7 +46,8 @@ RUN wget ${PYPY2_PACKAGE_URL} -nv -O - | tar xj
 RUN ln -s $(python -c 'import os; print(os.path.basename(os.environ["PYPY2_PACKAGE_URL"]).rsplit(".", 2)[0])') pypy2_install
 RUN pypy2_install/bin/pypy -m ensurepip
 RUN pypy2_install/bin/pypy -m pip install virtualenv
-RUN pypy2_install/bin/virtualenv pypy2_venv
+RUN pypy2_install/bin/pypy -m virtualenv pypy2_venv
+RUN pypy2_venv/bin/python -m pip install requests
 
 RUN wget ${PYPY3_PACKAGE_URL} -nv -O pypy.tar.bz2
 RUN mkdir -p pypy3_install
@@ -70,3 +74,5 @@ COPY ./scripts/download_package.py /root/scripts/download_package.py
 COPY ./scripts/build_wheels.py /root/scripts/build_wheels.py
 COPY ./scripts/packages.lst /root/scripts/packages.lst
 
+#for pygobject
+RUN pypy3_venv/bin/python -mpip install pycairo
