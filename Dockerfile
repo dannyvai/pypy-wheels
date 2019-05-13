@@ -48,6 +48,7 @@ RUN pypy2_install/bin/pypy -m ensurepip
 RUN pypy2_install/bin/pypy -m pip install virtualenv
 RUN pypy2_install/bin/pypy -m virtualenv pypy2_venv
 RUN pypy2_venv/bin/python -m pip install requests
+RUN pypy2_venv/bin/python -mpip install pycairo
 
 RUN wget ${PYPY3_PACKAGE_URL} -nv -O pypy.tar.bz2
 RUN mkdir -p pypy3_install
@@ -55,8 +56,12 @@ RUN (cd pypy3_install; tar --strip-components=1 -xf ../pypy.tar.bz2)
 RUN pypy3_install/bin/pypy3 -mensurepip
 RUN pypy3_install/bin/pypy3 -mpip install --upgrade pip setuptools
 RUN pypy3_install/bin/pypy3 -mpip install virtualenv
-RUN pypy3_install/bin/pypy3 -mpip install requests
 RUN pypy3_install/bin/virtualenv pypy3_venv
+
+RUN pypy3_venv/bin/python -mpip install requests
+#for pygobject
+RUN pypy3_venv/bin/python -mpip install pycairo
+
 
 RUN echo "source pypy3_venv/bin/activate" >> ~/.bashrc
 RUN locale-gen en_US.UTF-8
@@ -65,7 +70,6 @@ RUN echo "export LANGUAGE=en_US.UTF-8" >> ~/.bashrc
 RUN echo "export LC_ALL=en_US.UTF-8" >> ~/.bashrc
 RUN echo "export LC_CTYPE=en_US.UTF-8" >> ~/.bashrc
 
-RUN pypy3_venv/bin/python -mpip install requests
 
 RUN mkdir /root/scripts
 RUN mkdir /root/wheels
@@ -74,5 +78,3 @@ COPY ./scripts/download_package.py /root/scripts/download_package.py
 COPY ./scripts/build_wheels.py /root/scripts/build_wheels.py
 COPY ./scripts/packages.lst /root/scripts/packages.lst
 
-#for pygobject
-RUN pypy3_venv/bin/python -mpip install pycairo
