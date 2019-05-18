@@ -23,6 +23,12 @@ cvxopt
 bitarray no bdist_wheel
 rasterio need to add GDAL (not the first package)
 mpi4py no mpi
+need to update the packages that doesn't need to compile to a file
+need to make sure the already-built packages work
+
+scikit-image 0.15+ support only Python 3.5 and above.
+For Python 2.7, please install the 0.14.x Long Term Support using:
+$ pip install 'scikit-image<0.15'
 
 
-
+find compatible latest versions for python2.7
